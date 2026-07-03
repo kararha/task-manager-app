@@ -1,0 +1,19 @@
+{
+  "name": "aetherflow-3d-task-manager",
+  "version": "1.0.0",
+  "description": "A backendless 3D Task Manager running entirely in the browser using SQLite WebAssembly and Three.js.",
+  "scripts": {
+    "dev": "npx -y http-server -p 8543 -c-1 -o"
+  },
+  "keywords": [
+    "3d",
+    "task-manager",
+    "kanban",
+    "sqlite",
+    "wasm",
+    "threejs",
+    "indexeddb"
+  ],
+  "author": "Antigravity Pair Programmer",
+  "license": "MIT"
+}
