@@ -243,28 +243,16 @@ export default function TaskManager() {
           </div>
 
           {/* Filters */}
-          <div className="flex flex-col xl:flex-row lg:flex-nowrap items-center gap-4 sm:gap-6 w-full xl:w-auto justify-end">
-            <div className="flex flex-col sm:flex-row gap-4">
-              <div className="flex flex-wrap justify-center items-center gap-3 sm:gap-4 w-full sm:w-auto">
-                {(['All', 'Active', 'Completed'] as FilterStatus[]).map(status => (
-                  <button
-                    key={status}
-                    onClick={() => setStatusFilter(status)}
-                    className={`px-3 py-1.5 sm:px-5 sm:py-2.5 rounded-lg sm:rounded-xl font-bold uppercase tracking-wide text-[10px] sm:text-xs transition-all duration-200 flex-none ${
-                      statusFilter === status 
-                        ? 'bg-neu-base shadow-neu-pressed text-neu-accent' 
-                        : 'bg-neu-base shadow-neu-flat hover:shadow-neu-sm active:shadow-neu-pressed text-gray-500 hover:text-gray-700'
-                    }`}
-                  >
-                    {status}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div className="h-px w-full sm:h-12 sm:w-px bg-white/40 shadow-sm block sm:hidden lg:block sm:mx-2 my-2 sm:my-0"></div>
-
-            <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 w-auto">
+          <div className="flex flex-col sm:flex-row flex-wrap items-center gap-3 sm:gap-4 w-full sm:w-auto justify-end">
+            <select 
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value as FilterStatus)}
+              className="w-full sm:w-auto bg-neu-base shadow-neu-flat hover:shadow-neu-sm active:shadow-neu-pressed rounded-xl px-4 sm:px-6 py-2 sm:py-2.5 outline-none cursor-pointer font-bold text-gray-600 appearance-none transition-all text-center uppercase tracking-wide text-[10px] sm:text-xs"
+            >
+              <option value="All">All Status</option>
+              <option value="Active">Active</option>
+              <option value="Completed">Completed</option>
+            </select>
               <div className="relative w-full sm:w-auto">
                 <SlidersHorizontal className="w-3.5 h-3.5 sm:w-4 sm:h-4 absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
                 <select 
