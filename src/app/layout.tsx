@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import ToasterContext from "./components/ToasterContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "TaskMaster - Production Task Manager",
-  description: "A modern, client-side task manager built with Next.js",
+  title: "Neumorphic Task Manager",
+  description: "A beautiful, client-side task manager using Next.js and Tailwind CSS.",
 };
 
 export default function RootLayout({
@@ -16,7 +17,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body className={inter.className}>
+        <ToasterContext />
+        {children}
+      </body>
     </html>
   );
 }

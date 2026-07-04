@@ -3,6 +3,7 @@
 import React from 'react';
 import { Task } from '../types';
 import { Calendar, Tag, AlertCircle, CheckCircle2, Circle, Edit2, Trash2 } from 'lucide-react';
+import { toast } from 'react-hot-toast';
 
 interface TaskCardProps {
   task: Task;
@@ -52,9 +53,31 @@ export default function TaskCard({ task, onUpdate, onDelete, onEdit }: TaskCardP
               </button>
               <button 
                 onClick={() => {
-                  if (window.confirm('Are you sure you want to delete this task?')) {
-                    onDelete(task.id);
-                  }
+                  toast((t) => (
+                    <div className="flex flex-col gap-3">
+                      <span className="font-bold text-neu-text text-sm">Delete this task?</span>
+                      <div className="flex gap-3">
+                        <button 
+                          onClick={() => { 
+                            toast.dismiss(t.id); 
+                            onDelete(task.id); 
+                            toast.success('Task deleted', { 
+                              iconTheme: { primary: '#ef4444', secondary: '#E0E5EC' },
+                            }); 
+                          }}
+                          className="px-4 py-2 bg-neu-base shadow-neu-flat hover:shadow-neu-sm active:shadow-neu-pressed rounded-xl text-red-500 text-xs font-bold transition-all"
+                        >
+                          Yes, delete
+                        </button>
+                        <button 
+                          onClick={() => toast.dismiss(t.id)}
+                          className="px-4 py-2 bg-neu-base shadow-neu-flat hover:shadow-neu-sm active:shadow-neu-pressed rounded-xl text-gray-500 text-xs font-bold transition-all"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </div>
+                  ), { duration: 5000 });
                 }}
                 className="w-10 h-10 rounded-full bg-neu-base shadow-neu-flat hover:shadow-neu-sm active:shadow-neu-pressed flex items-center justify-center text-gray-500 hover:text-red-500 transition-all"
                 aria-label="Delete task"
