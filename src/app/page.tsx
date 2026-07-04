@@ -7,6 +7,7 @@ import TaskCard from './components/TaskCard';
 import TaskForm from './components/TaskForm';
 import DashboardStats from './components/DashboardStats';
 import { Plus, Search, SlidersHorizontal, LayoutDashboard, Moon, Sun } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export default function TaskManager() {
   const [tasks, setTasks, isHydrated] = useLocalStorage<Task[]>('tasks', []);
@@ -218,20 +219,30 @@ export default function TaskManager() {
         {/* Task List */}
         <section>
           {filteredAndSortedTasks.length > 0 ? (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-10">
-              {filteredAndSortedTasks.map(task => (
-                <TaskCard 
-                  key={task.id} 
-                  task={task} 
-                  onUpdate={handleUpdateTask} 
-                  onDelete={handleDeleteTask} 
-                  onEdit={(t) => {
-                    setEditingTask(t);
-                    setIsFormOpen(true);
-                  }}
-                />
-              ))}
-            </div>
+            <motion.div layout className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-10">
+              <AnimatePresence mode="popLayout">
+                {filteredAndSortedTasks.map(task => (
+                  <motion.div
+                    key={task.id}
+                    layout
+                    initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.9, y: -20 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <TaskCard 
+                      task={task} 
+                      onUpdate={handleUpdateTask} 
+                      onDelete={handleDeleteTask} 
+                      onEdit={(t) => {
+                        setEditingTask(t);
+                        setIsFormOpen(true);
+                      }}
+                    />
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </motion.div>
           ) : (
             <div className="text-center py-16 sm:py-24 px-4 sm:px-6 bg-neu-base shadow-neu-pressed rounded-3xl sm:rounded-[48px] max-w-2xl mx-auto mt-8 sm:mt-16 border-2 border-white/20">
               <div className="w-20 h-20 sm:w-24 sm:h-24 bg-neu-base shadow-neu-flat rounded-full flex items-center justify-center mx-auto mb-6 sm:mb-8">
