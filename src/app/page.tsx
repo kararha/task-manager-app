@@ -250,7 +250,7 @@ export default function TaskManager() {
                   <button
                     key={status}
                     onClick={() => setStatusFilter(status)}
-                    className={`px-4 py-2 sm:px-6 sm:py-3 rounded-xl sm:rounded-2xl font-extrabold uppercase tracking-wider text-[10px] sm:text-xs transition-all duration-200 flex-1 sm:flex-none ${
+                    className={`px-3 py-1.5 sm:px-5 sm:py-2.5 rounded-lg sm:rounded-xl font-bold uppercase tracking-wide text-[10px] sm:text-xs transition-all duration-200 flex-none ${
                       statusFilter === status 
                         ? 'bg-neu-base shadow-neu-pressed text-neu-accent' 
                         : 'bg-neu-base shadow-neu-flat hover:shadow-neu-sm active:shadow-neu-pressed text-gray-500 hover:text-gray-700'
@@ -264,13 +264,13 @@ export default function TaskManager() {
 
             <div className="h-px w-full sm:h-12 sm:w-px bg-white/40 shadow-sm block sm:hidden lg:block sm:mx-2 my-2 sm:my-0"></div>
 
-            <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-5 w-full sm:w-auto">
-              <div className="relative w-full sm:flex-1 md:flex-none">
-                <SlidersHorizontal className="w-4 h-4 sm:w-5 sm:h-5 absolute left-5 sm:left-6 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+            <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 w-auto">
+              <div className="relative w-full sm:w-auto">
+                <SlidersHorizontal className="w-3.5 h-3.5 sm:w-4 sm:h-4 absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
                 <select 
                   value={sortOption}
                   onChange={(e) => setSortOption(e.target.value as SortOption)}
-                  className="w-full bg-neu-base shadow-neu-flat hover:shadow-neu-sm active:shadow-neu-pressed rounded-2xl sm:rounded-3xl pl-12 sm:pl-14 pr-6 sm:pr-8 py-3 sm:py-4 outline-none cursor-pointer font-bold text-gray-600 appearance-none transition-all uppercase tracking-wide text-xs"
+                  className="w-full sm:w-auto bg-neu-base shadow-neu-flat hover:shadow-neu-sm active:shadow-neu-pressed rounded-xl pl-9 sm:pl-10 pr-6 sm:pr-8 py-2 sm:py-2.5 outline-none cursor-pointer font-bold text-gray-600 appearance-none transition-all uppercase tracking-wide text-[10px] sm:text-xs"
                 >
                   <option value="manual">Manual Order (Drag)</option>
                   <option value="dueDateAsc">Date (Earliest)</option>
@@ -283,7 +283,7 @@ export default function TaskManager() {
               <select 
                 value={priorityFilter}
                 onChange={(e) => setPriorityFilter(e.target.value as 'All' | 'High' | 'Medium' | 'Low')}
-                className="w-full sm:flex-1 md:flex-none bg-neu-base shadow-neu-flat hover:shadow-neu-sm active:shadow-neu-pressed rounded-2xl sm:rounded-3xl px-6 sm:px-8 py-3 sm:py-4 outline-none cursor-pointer font-bold text-gray-600 appearance-none transition-all text-center uppercase tracking-wide text-xs"
+                className="w-full sm:w-auto bg-neu-base shadow-neu-flat hover:shadow-neu-sm active:shadow-neu-pressed rounded-xl px-4 sm:px-6 py-2 sm:py-2.5 outline-none cursor-pointer font-bold text-gray-600 appearance-none transition-all text-center uppercase tracking-wide text-[10px] sm:text-xs"
               >
                 <option value="All">All Priority</option>
                 <option value="High">High</option>
@@ -295,7 +295,7 @@ export default function TaskManager() {
                 <select 
                   value={categoryFilter}
                   onChange={(e) => setCategoryFilter(e.target.value)}
-                  className="w-full sm:flex-1 md:flex-none bg-neu-base shadow-neu-flat hover:shadow-neu-sm active:shadow-neu-pressed rounded-2xl sm:rounded-3xl px-6 sm:px-8 py-3 sm:py-4 outline-none cursor-pointer font-bold text-gray-600 appearance-none transition-all text-center uppercase tracking-wide text-xs"
+                  className="w-full sm:w-auto bg-neu-base shadow-neu-flat hover:shadow-neu-sm active:shadow-neu-pressed rounded-xl px-4 sm:px-6 py-2 sm:py-2.5 outline-none cursor-pointer font-bold text-gray-600 appearance-none transition-all text-center uppercase tracking-wide text-[10px] sm:text-xs"
                 >
                   <option value="All">All Tags</option>
                   {allCategories.map(cat => (
