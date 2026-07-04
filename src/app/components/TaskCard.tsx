@@ -43,13 +43,13 @@ export default function TaskCard({ task, onUpdate, onDelete, onEdit }: TaskCardP
               {task.title}
             </h3>
             
-            <div className="flex gap-4 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
+            <div className="flex flex-col gap-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity ml-2">
               <button 
                 onClick={() => onEdit(task)}
-                className="w-10 h-10 rounded-full bg-neu-base shadow-neu-flat hover:shadow-neu-sm active:shadow-neu-pressed flex items-center justify-center text-gray-500 hover:text-neu-accent transition-all"
+                className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-neu-base shadow-neu-flat hover:shadow-neu-sm active:shadow-neu-pressed flex items-center justify-center text-gray-500 hover:text-neu-accent transition-all"
                 aria-label="Edit task"
               >
-                <Edit2 className="w-4 h-4" />
+                <Edit2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
               </button>
               <button 
                 onClick={() => {
@@ -79,10 +79,10 @@ export default function TaskCard({ task, onUpdate, onDelete, onEdit }: TaskCardP
                     </div>
                   ), { duration: 5000 });
                 }}
-                className="w-10 h-10 rounded-full bg-neu-base shadow-neu-flat hover:shadow-neu-sm active:shadow-neu-pressed flex items-center justify-center text-gray-500 hover:text-red-500 transition-all"
+                className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-neu-base shadow-neu-flat hover:shadow-neu-sm active:shadow-neu-pressed flex items-center justify-center text-gray-500 hover:text-red-500 transition-all"
                 aria-label="Delete task"
               >
-                <Trash2 className="w-4 h-4" />
+                <Trash2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
               </button>
             </div>
           </div>
