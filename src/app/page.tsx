@@ -6,8 +6,9 @@ import { useLocalStorage } from './hooks/useLocalStorage';
 import TaskCard from './components/TaskCard';
 import TaskForm from './components/TaskForm';
 import DashboardStats from './components/DashboardStats';
-import { Plus, Search, SlidersHorizontal, LayoutDashboard, Moon, Sun } from 'lucide-react';
+import { Plus, Search, SlidersHorizontal, LayoutDashboard, Moon, Sun, Download, Upload } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { toast } from 'react-hot-toast';
 
 export default function TaskManager() {
   const [tasks, setTasks, isHydrated] = useLocalStorage<Task[]>('tasks', []);
@@ -108,6 +109,40 @@ export default function TaskManager() {
     setTasks(tasks.filter(t => t.id !== id));
   };
 
+  const exportTasks = () => {
+    const dataStr = JSON.stringify(tasks, null, 2);
+    const blob = new Blob([dataStr], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'taskmaster-backup.json';
+    link.click();
+    URL.revokeObjectURL(url);
+    toast.success('Tasks exported successfully!', { iconTheme: { primary: '#4299E1', secondary: '#E0E5EC' }});
+  };
+
+  const importTasks = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      try {
+        const importedData = JSON.parse(event.target?.result as string);
+        if (Array.isArray(importedData)) {
+          setTasks(importedData);
+          toast.success('Tasks imported successfully!', { iconTheme: { primary: '#4299E1', secondary: '#E0E5EC' }});
+        } else {
+          toast.error('Invalid backup file format.');
+        }
+      } catch (err) {
+        toast.error('Failed to parse backup file.');
+      }
+    };
+    reader.readAsText(file);
+    e.target.value = ''; // Reset input
+  };
+
   if (!isHydrated) {
     return (
       <div className="min-h-screen bg-[#E0E5EC] flex items-center justify-center">
@@ -130,20 +165,42 @@ export default function TaskManager() {
           <h1 className="text-3xl sm:text-4xl font-extrabold tracking-widest uppercase text-transparent bg-clip-text bg-gradient-to-br from-gray-600 to-gray-800 flex-1 text-center sm:text-left drop-shadow-sm">
             TaskMaster
           </h1>
-          <div className="flex items-center gap-3 sm:gap-4">
+          <div className="flex flex-wrap justify-center sm:justify-end items-center gap-3 sm:gap-4">
+            <input 
+              type="file" 
+              accept=".json" 
+              id="import-backup" 
+              className="hidden" 
+              onChange={importTasks} 
+            />
+            <label 
+              htmlFor="import-backup"
+              className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-neu-base shadow-neu-flat hover:shadow-neu-sm active:shadow-neu-pressed flex items-center justify-center text-gray-500 hover:text-neu-accent transition-all duration-200 cursor-pointer"
+              title="Import Backup"
+            >
+              <Upload className="w-4 h-4 sm:w-5 sm:h-5" />
+            </label>
+            <button 
+              onClick={exportTasks}
+              className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-neu-base shadow-neu-flat hover:shadow-neu-sm active:shadow-neu-pressed flex items-center justify-center text-gray-500 hover:text-neu-accent transition-all duration-200"
+              title="Export Backup"
+            >
+              <Download className="w-4 h-4 sm:w-5 sm:h-5" />
+            </button>
             <button 
               onClick={() => setIsDarkMode(!isDarkMode)}
-              className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-neu-base shadow-neu-flat hover:shadow-neu-sm active:shadow-neu-pressed flex items-center justify-center text-neu-accent transition-all duration-200"
+              className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-neu-base shadow-neu-flat hover:shadow-neu-sm active:shadow-neu-pressed flex items-center justify-center text-neu-accent transition-all duration-200"
               aria-label="Toggle Dark Mode"
+              title="Toggle Dark Mode"
             >
-              {isDarkMode ? <Sun className="w-5 h-5 sm:w-6 sm:h-6" /> : <Moon className="w-5 h-5 sm:w-6 sm:h-6" />}
+              {isDarkMode ? <Sun className="w-4 h-4 sm:w-5 sm:h-5" /> : <Moon className="w-4 h-4 sm:w-5 sm:h-5" />}
             </button>
             <button 
               onClick={() => { setEditingTask(null); setIsFormOpen(true); }}
-              className="flex items-center gap-2 sm:gap-3 bg-neu-base shadow-neu-flat hover:shadow-neu-sm active:shadow-neu-pressed text-neu-accent px-6 py-4 sm:px-8 sm:py-5 rounded-2xl font-extrabold transition-all duration-200"
+              className="flex items-center gap-2 sm:gap-3 bg-neu-base shadow-neu-flat hover:shadow-neu-sm active:shadow-neu-pressed text-neu-accent px-5 py-3 sm:px-8 sm:py-4 rounded-2xl font-extrabold transition-all duration-200"
             >
-              <Plus className="w-5 h-5 sm:w-6 sm:h-6" />
-              <span className="uppercase tracking-widest text-xs sm:text-sm">New Task</span>
+              <Plus className="w-4 h-4 sm:w-5 sm:h-5" />
+              <span className="uppercase tracking-widest text-[10px] sm:text-xs">New Task</span>
             </button>
           </div>
         </header>
