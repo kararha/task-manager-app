@@ -6,12 +6,22 @@ import { useLocalStorage } from './hooks/useLocalStorage';
 import TaskCard from './components/TaskCard';
 import TaskForm from './components/TaskForm';
 import DashboardStats from './components/DashboardStats';
-import { Plus, Search, SlidersHorizontal, LayoutDashboard } from 'lucide-react';
+import { Plus, Search, SlidersHorizontal, LayoutDashboard, Moon, Sun } from 'lucide-react';
 
 export default function TaskManager() {
   const [tasks, setTasks, isHydrated] = useLocalStorage<Task[]>('tasks', []);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
+
+  const [isDarkMode, setIsDarkMode] = useLocalStorage<boolean>('darkMode', false);
+  
+  React.useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [isDarkMode]);
 
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<FilterStatus>('All');
@@ -119,13 +129,22 @@ export default function TaskManager() {
           <h1 className="text-3xl sm:text-4xl font-extrabold tracking-widest uppercase text-transparent bg-clip-text bg-gradient-to-br from-gray-600 to-gray-800 flex-1 text-center sm:text-left drop-shadow-sm">
             TaskMaster
           </h1>
-          <button 
-            onClick={() => { setEditingTask(null); setIsFormOpen(true); }}
-            className="flex items-center gap-2 sm:gap-3 bg-neu-base shadow-neu-flat hover:shadow-neu-sm active:shadow-neu-pressed text-neu-accent px-6 py-4 sm:px-8 sm:py-5 rounded-2xl font-extrabold transition-all duration-200"
-          >
-            <Plus className="w-5 h-5 sm:w-6 sm:h-6" />
-            <span className="uppercase tracking-widest text-xs sm:text-sm">New Task</span>
-          </button>
+          <div className="flex items-center gap-3 sm:gap-4">
+            <button 
+              onClick={() => setIsDarkMode(!isDarkMode)}
+              className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-neu-base shadow-neu-flat hover:shadow-neu-sm active:shadow-neu-pressed flex items-center justify-center text-neu-accent transition-all duration-200"
+              aria-label="Toggle Dark Mode"
+            >
+              {isDarkMode ? <Sun className="w-5 h-5 sm:w-6 sm:h-6" /> : <Moon className="w-5 h-5 sm:w-6 sm:h-6" />}
+            </button>
+            <button 
+              onClick={() => { setEditingTask(null); setIsFormOpen(true); }}
+              className="flex items-center gap-2 sm:gap-3 bg-neu-base shadow-neu-flat hover:shadow-neu-sm active:shadow-neu-pressed text-neu-accent px-6 py-4 sm:px-8 sm:py-5 rounded-2xl font-extrabold transition-all duration-200"
+            >
+              <Plus className="w-5 h-5 sm:w-6 sm:h-6" />
+              <span className="uppercase tracking-widest text-xs sm:text-sm">New Task</span>
+            </button>
+          </div>
         </header>
 
         <DashboardStats tasks={tasks} />

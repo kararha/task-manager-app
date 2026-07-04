@@ -2,8 +2,40 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Neumorphism requires exact matching background */
+:root {
+  --neu-base: #E0E5EC;
+  --neu-text: #2D3748;
+  --neu-text-muted: #718096;
+  --neu-accent: #4299E1;
+  
+  --neu-shadow-dark: rgba(163,177,198,0.6);
+  --neu-shadow-light: rgba(255,255,255,0.6);
+  --neu-shadow-dark-inner: rgba(163,177,198,0.7);
+  --neu-shadow-light-inner: rgba(255,255,255,0.8);
+
+  --neu-flat-shadow: 9px 9px 16px var(--neu-shadow-dark), -9px -9px 16px var(--neu-shadow-light);
+  --neu-pressed-shadow: inset 6px 6px 10px var(--neu-shadow-dark-inner), inset -6px -6px 10px var(--neu-shadow-light-inner);
+  --neu-sm-shadow: 4px 4px 8px var(--neu-shadow-dark), -4px -4px 8px var(--neu-shadow-light);
+}
+
+.dark {
+  --neu-base: #292d32;
+  --neu-text: #E2E8F0;
+  --neu-text-muted: #A0AEC0;
+  --neu-accent: #63B3ED;
+  
+  --neu-shadow-dark: rgba(20, 23, 27, 0.85);
+  --neu-shadow-light: rgba(62, 67, 73, 0.65);
+  --neu-shadow-dark-inner: rgba(20, 23, 27, 0.95);
+  --neu-shadow-light-inner: rgba(62, 67, 73, 0.4);
+
+  --neu-flat-shadow: 9px 9px 16px var(--neu-shadow-dark), -9px -9px 16px var(--neu-shadow-light);
+  --neu-pressed-shadow: inset 6px 6px 10px var(--neu-shadow-dark-inner), inset -6px -6px 10px var(--neu-shadow-light-inner);
+  --neu-sm-shadow: 4px 4px 8px var(--neu-shadow-dark), -4px -4px 8px var(--neu-shadow-light);
+}
+
 body {
-  background-color: #E0E5EC;
-  color: #2D3748;
+  background-color: var(--neu-base);
+  color: var(--neu-text);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
