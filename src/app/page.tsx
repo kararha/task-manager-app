@@ -260,22 +260,6 @@ export default function TaskManager() {
                   </button>
                 ))}
               </div>
-
-              <div className="flex flex-wrap justify-center items-center gap-3 sm:gap-4 w-full sm:w-auto">
-                {(['All', 'High', 'Medium', 'Low'] as const).map(prio => (
-                  <button
-                    key={prio}
-                    onClick={() => setPriorityFilter(prio)}
-                    className={`px-4 py-2 sm:px-6 sm:py-3 rounded-xl sm:rounded-2xl font-extrabold uppercase tracking-wider text-[10px] sm:text-xs transition-all duration-200 flex-1 sm:flex-none ${
-                      priorityFilter === prio 
-                        ? 'bg-neu-base shadow-neu-pressed text-neu-accent' 
-                        : 'bg-neu-base shadow-neu-flat hover:shadow-neu-sm active:shadow-neu-pressed text-gray-500 hover:text-gray-700'
-                    }`}
-                  >
-                    {prio === 'All' ? 'All Priority' : prio}
-                  </button>
-                ))}
-              </div>
             </div>
 
             <div className="h-px w-full sm:h-12 sm:w-px bg-white/40 shadow-sm block sm:hidden lg:block sm:mx-2 my-2 sm:my-0"></div>
@@ -295,6 +279,17 @@ export default function TaskManager() {
                   <option value="priorityAsc">Priority (Low-High)</option>
                 </select>
               </div>
+
+              <select 
+                value={priorityFilter}
+                onChange={(e) => setPriorityFilter(e.target.value as 'All' | 'High' | 'Medium' | 'Low')}
+                className="w-full sm:flex-1 md:flex-none bg-neu-base shadow-neu-flat hover:shadow-neu-sm active:shadow-neu-pressed rounded-2xl sm:rounded-3xl px-6 sm:px-8 py-3 sm:py-4 outline-none cursor-pointer font-bold text-gray-600 appearance-none transition-all text-center uppercase tracking-wide text-xs"
+              >
+                <option value="All">All Priority</option>
+                <option value="High">High</option>
+                <option value="Medium">Medium</option>
+                <option value="Low">Low</option>
+              </select>
 
               {allCategories.length > 0 && (
                 <select 
