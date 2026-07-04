@@ -9,8 +9,9 @@ interface DashboardStatsProps {
 }
 
 export default function DashboardStats({ tasks }: DashboardStatsProps) {
-  const total = tasks.length;
-  const completed = tasks.filter(t => t.completed).length;
+  const safeTasks = Array.isArray(tasks) ? tasks : [];
+  const total = safeTasks.length;
+  const completed = safeTasks.filter(t => t?.completed).length;
   const pending = total - completed;
   const percentage = total === 0 ? 0 : Math.round((completed / total) * 100);
 
@@ -29,4 +30,9 @@ export default function DashboardStats({ tasks }: DashboardStatsProps) {
             <stat.icon className={`w-5 h-5 sm:w-7 sm:h-7 ${stat.color}`} />
           </div>
           <div className="text-2xl sm:text-4xl font-extrabold text-neu-text mb-1 sm:mb-2">{stat.value}</div>
-          <h4 className="text-gray-500 font-bold
+          <h4 className="text-gray-500 font-bold text-xs sm:text-sm uppercase tracking-wider sm:tracking-widest">{stat.label}</h4>
+        </div>
+      ))}
+    </div>
+  );
+}

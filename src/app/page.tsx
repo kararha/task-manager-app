@@ -18,51 +18,61 @@ export default function TaskManager() {
   const [sortOption, setSortOption] = useState<SortOption>('dueDateAsc');
   const [categoryFilter, setCategoryFilter] = useState<string>('All');
 
+  const safeTasks = Array.isArray(tasks) ? tasks : [];
+
   const allCategories = useMemo(() => {
     const cats = new Set<string>();
-    tasks.forEach(t => t.categories.forEach(c => cats.add(c)));
+    safeTasks.forEach(t => {
+      if (Array.isArray(t?.categories)) {
+        t.categories.forEach(c => cats.add(c));
+      }
+    });
     return Array.from(cats).sort();
-  }, [tasks]);
+  }, [safeTasks]);
 
   const filteredAndSortedTasks = useMemo(() => {
-    let result = [...tasks];
+    let result = [...safeTasks];
 
     if (searchQuery) {
       const lowerQuery = searchQuery.toLowerCase();
       result = result.filter(t => 
-        t.title.toLowerCase().includes(lowerQuery) || 
-        t.description.toLowerCase().includes(lowerQuery)
+        t?.title?.toLowerCase().includes(lowerQuery) || 
+        t?.description?.toLowerCase().includes(lowerQuery)
       );
     }
 
     if (statusFilter === 'Active') {
-      result = result.filter(t => !t.completed);
+      result = result.filter(t => !t?.completed);
     } else if (statusFilter === 'Completed') {
-      result = result.filter(t => t.completed);
+      result = result.filter(t => t?.completed);
     }
 
     if (categoryFilter !== 'All') {
-      result = result.filter(t => t.categories.includes(categoryFilter));
+      result = result.filter(t => Array.isArray(t?.categories) && t.categories.includes(categoryFilter));
     }
 
     result.sort((a, b) => {
-      const priorityWeights = { High: 3, Medium: 2, Low: 1 };
+      const priorityWeights: Record<string, number> = { High: 3, Medium: 2, Low: 1 };
+      
+      const getPriority = (p: any) => priorityWeights[p] || 0;
+      const getTime = (d: any) => d ? new Date(d).getTime() : 0;
+
       switch (sortOption) {
         case 'dueDateAsc':
-          return new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime();
+          return getTime(a.dueDate) - getTime(b.dueDate);
         case 'dueDateDesc':
-          return new Date(b.dueDate).getTime() - new Date(a.dueDate).getTime();
+          return getTime(b.dueDate) - getTime(a.dueDate);
         case 'priorityDesc':
-          return priorityWeights[b.priority] - priorityWeights[a.priority];
+          return getPriority(b.priority) - getPriority(a.priority);
         case 'priorityAsc':
-          return priorityWeights[a.priority] - priorityWeights[b.priority];
+          return getPriority(a.priority) - getPriority(b.priority);
         default:
           return 0;
       }
     });
 
     return result;
-  }, [tasks, searchQuery, statusFilter, categoryFilter, sortOption]);
+  }, [safeTasks, searchQuery, statusFilter, categoryFilter, sortOption]);
 
   const handleSaveTask = (taskData: Omit<Task, 'id' | 'createdAt'>) => {
     if (editingTask) {
@@ -216,4 +226,28 @@ export default function TaskManager() {
               </p>
               {tasks.length === 0 && (
                 <button 
-                 
+                  onClick={() => setIsFormOpen(true)}
+                  className="bg-neu-base shadow-neu-flat hover:shadow-neu-sm active:shadow-neu-pressed text-neu-accent px-8 sm:px-12 py-4 sm:py-5 rounded-2xl sm:rounded-3xl font-extrabold uppercase tracking-widest transition-all duration-200 text-sm sm:text-base"
+                >
+                  Create First Task
+                </button>
+              )}
+            </div>
+          )}
+        </section>
+      </div>
+
+      {/* Form Modal */}
+      {isFormOpen && (
+        <TaskForm 
+          initialTask={editingTask}
+          onSave={handleSaveTask}
+          onCancel={() => {
+            setIsFormOpen(false);
+            setEditingTask(null);
+          }}
+        />
+      )}
+    </main>
+  );
+}

@@ -158,4 +158,10 @@ export default function TaskForm({ initialTask, onSave, onCancel }: TaskFormProp
               className="px-6 py-3 font-bold text-sm text-neu-accent rounded-2xl bg-neu-base shadow-neu-flat hover:shadow-neu-sm active:shadow-neu-pressed transition-all duration-200"
             >
               {initialTask ? 'Save Changes' : 'Create Task'}
- 
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
