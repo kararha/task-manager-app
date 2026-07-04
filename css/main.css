@@ -1,57 +1,56 @@
-/* Global variables & Neon Themes */
 :root {
-  --font-hud: 'Outfit', sans-serif;
-  --font-tech: 'Orbitron', sans-serif;
+  --font-hud: 'Inter', sans-serif;
+  --font-tech: 'Plus Jakarta Sans', sans-serif;
   
-  /* Cyber Theme Colors */
-  --bg-dark: #0a0814;
-  --bg-panel: rgba(18, 14, 36, 0.5);
-  --bg-panel-solid: #120e24;
-  --border-glow: rgba(157, 0, 255, 0.15);
+  /* Cyber Theme Colors (Elegant Variant) */
+  --bg-dark: #0f111a;
+  --bg-panel: rgba(22, 24, 35, 0.65);
+  --bg-panel-solid: #161823;
+  --border-glow: rgba(255, 255, 255, 0.08);
   
-  --neon-cyan: #00f0ff;
-  --neon-magenta: #ff007f;
-  --neon-purple: #9d00ff;
-  --neon-amber: #ffaa00;
-  --neon-green: #39ff14;
+  --neon-cyan: #3bd6c6;
+  --neon-magenta: #ff6b9e;
+  --neon-purple: #b37af5;
+  --neon-amber: #ffd166;
+  --neon-green: #06d6a0;
   
-  --text-primary: #f0f0f5;
-  --text-secondary: #a09eb5;
-  --text-muted: #625f7a;
+  --text-primary: #f8f9fa;
+  --text-secondary: #adb5bd;
+  --text-muted: #6c757d;
   
-  --glow-shadow-cyan: 0 0 10px rgba(0, 240, 255, 0.3), 0 0 20px rgba(0, 240, 255, 0.1);
-  --glow-shadow-magenta: 0 0 10px rgba(255, 0, 127, 0.3), 0 0 20px rgba(255, 0, 127, 0.1);
-  --glow-shadow-amber: 0 0 10px rgba(255, 170, 0, 0.3), 0 0 20px rgba(255, 170, 0, 0.1);
-  --glow-shadow-purple: 0 0 10px rgba(157, 0, 255, 0.3), 0 0 20px rgba(157, 0, 255, 0.1);
+  --glow-shadow-cyan: 0 0 12px rgba(59, 214, 198, 0.25), 0 0 24px rgba(59, 214, 198, 0.1);
+  --glow-shadow-magenta: 0 0 12px rgba(255, 107, 158, 0.25), 0 0 24px rgba(255, 107, 158, 0.1);
+  --glow-shadow-amber: 0 0 12px rgba(255, 209, 102, 0.25), 0 0 24px rgba(255, 209, 102, 0.1);
+  --glow-shadow-purple: 0 0 12px rgba(179, 122, 245, 0.25), 0 0 24px rgba(179, 122, 245, 0.1);
 }
 
 /* Theme variations */
 body.theme-aurora {
-  --bg-dark: #051410;
-  --bg-panel: rgba(7, 28, 22, 0.5);
-  --bg-panel-solid: #071c16;
-  --border-glow: rgba(0, 255, 150, 0.15);
-  --neon-cyan: #00ffaa;
-  --neon-magenta: #00ff66;
-  --neon-purple: #00ffaa;
-  --neon-amber: #c4ff00;
-  --glow-shadow-cyan: 0 0 10px rgba(0, 255, 170, 0.3);
-  --glow-shadow-magenta: 0 0 10px rgba(0, 255, 102, 0.3);
-  --glow-shadow-amber: 0 0 10px rgba(196, 255, 0, 0.3);
+  --bg-dark: #0a1412;
+  --bg-panel: rgba(15, 30, 27, 0.65);
+  --bg-panel-solid: #0f1e1b;
+  --border-glow: rgba(0, 255, 170, 0.08);
+  --neon-cyan: #4deeea;
+  --neon-magenta: #74f2ce;
+  --neon-purple: #4deeea;
+  --neon-amber: #d2f53c;
+  --glow-shadow-cyan: 0 0 12px rgba(77, 238, 234, 0.25);
+  --glow-shadow-magenta: 0 0 12px rgba(116, 242, 206, 0.25);
+  --glow-shadow-amber: 0 0 12px rgba(210, 245, 60, 0.25);
 }
 
 body.theme-obsidian {
-  --bg-dark: #0f0b07;
-  --bg-panel: rgba(31, 23, 14, 0.5);
-  --bg-panel-solid: #1f170e;
-  --border-glow: rgba(255, 170, 0, 0.15);
-  --neon-cyan: #ffaa00;
-  --neon-magenta: #ff5500;
-  --neon-purple: #ffaa00;
-  --neon-amber: #ffd000;
-  --glow-shadow-cyan: 0 0 10px rgba(255, 170, 0, 0.3);
-  --glow-shadow-magenta: 0 0 10px rgba(255, 85, 0, 0.3);
-  --glow-shadow-amber: 0 0 10px rgba(255, 208, 0, 0.3);
+  --bg-dark: #14110e;
+  --bg-panel: rgba(30, 25, 20, 0.65);
+  --bg-panel-solid: #1e1914;
+  --border-glow: rgba(255, 187, 51, 0.08);
+  --neon-cyan: #ffbb33;
+  --neon-magenta: #ff7733;
+  --neon-purple: #ffbb33;
+  --neon-amber: #ffcc55;
+  --glow-shadow-cyan: 0 0 12px rgba(255, 187, 51, 0.25);
+  --glow-shadow-magenta: 0 0 12px rgba(255, 119, 51, 0.25);
+  --glow-shadow-amber: 0 0 12px rgba(255, 204, 85, 0.25);
 }
 
 /* Resets & Core Layout */
