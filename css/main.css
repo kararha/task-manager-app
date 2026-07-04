@@ -1,56 +1,42 @@
 :root {
-  --font-hud: 'Inter', sans-serif;
-  --font-tech: 'Plus Jakarta Sans', sans-serif;
+  --font-hud: "Courier New", Courier, monospace;
+  --font-tech: "Times New Roman", Times, serif;
   
-  /* Spatial Glass Theme Colors */
-  --bg-dark: #050508;
-  --bg-panel: rgba(255, 255, 255, 0.05);
-  --bg-panel-solid: #1a1a24;
-  --border-glow: rgba(255, 255, 255, 0.15);
+  /* Brutalism Theme Colors */
+  --bg-dark: #ffff00;
+  --bg-panel: #ffffff;
+  --bg-panel-solid: #000000;
+  --border-glow: #000000;
   
-  --neon-cyan: #a8ece7;
-  --neon-magenta: #fca5a5;
-  --neon-purple: #c4b5fd;
-  --neon-amber: #fde047;
-  --neon-green: #86efac;
+  --neon-cyan: #0000ff;
+  --neon-magenta: #ff0000;
+  --neon-purple: #ff00ff;
+  --neon-amber: #000000;
+  --neon-green: #00ff00;
   
-  --text-primary: #ffffff;
-  --text-secondary: rgba(255, 255, 255, 0.7);
-  --text-muted: rgba(255, 255, 255, 0.4);
+  --text-primary: #000000;
+  --text-secondary: #0000ff;
+  --text-muted: #ff0000;
   
-  --glow-shadow-cyan: 0 0 15px rgba(168, 236, 231, 0.2);
-  --glow-shadow-magenta: 0 0 15px rgba(252, 165, 165, 0.2);
-  --glow-shadow-amber: 0 0 15px rgba(253, 224, 71, 0.2);
-  --glow-shadow-purple: 0 0 15px rgba(196, 181, 253, 0.2);
+  --glow-shadow-cyan: 4px 4px 0px #000000;
+  --glow-shadow-magenta: 4px 4px 0px #000000;
+  --glow-shadow-amber: 4px 4px 0px #000000;
+  --glow-shadow-purple: 4px 4px 0px #000000;
 }
 
 /* Theme variations */
 body.theme-aurora {
-  --bg-dark: #0a1412;
-  --bg-panel: rgba(15, 30, 27, 0.65);
-  --bg-panel-solid: #0f1e1b;
-  --border-glow: rgba(0, 255, 170, 0.08);
-  --neon-cyan: #4deeea;
-  --neon-magenta: #74f2ce;
-  --neon-purple: #4deeea;
-  --neon-amber: #d2f53c;
-  --glow-shadow-cyan: 0 0 12px rgba(77, 238, 234, 0.25);
-  --glow-shadow-magenta: 0 0 12px rgba(116, 242, 206, 0.25);
-  --glow-shadow-amber: 0 0 12px rgba(210, 245, 60, 0.25);
+  --bg-dark: #0000ff;
+  --bg-panel: #ffff00;
+  --text-primary: #000000;
+  --text-secondary: #ff0000;
 }
 
 body.theme-obsidian {
-  --bg-dark: #14110e;
-  --bg-panel: rgba(30, 25, 20, 0.65);
-  --bg-panel-solid: #1e1914;
-  --border-glow: rgba(255, 187, 51, 0.08);
-  --neon-cyan: #ffbb33;
-  --neon-magenta: #ff7733;
-  --neon-purple: #ffbb33;
-  --neon-amber: #ffcc55;
-  --glow-shadow-cyan: 0 0 12px rgba(255, 187, 51, 0.25);
-  --glow-shadow-magenta: 0 0 12px rgba(255, 119, 51, 0.25);
-  --glow-shadow-amber: 0 0 12px rgba(255, 204, 85, 0.25);
+  --bg-dark: #ff0000;
+  --bg-panel: #00ff00;
+  --text-primary: #000000;
+  --text-secondary: #0000ff;
 }
 
 /* Resets & Core Layout */
@@ -96,12 +82,12 @@ body, html {
 /* Glassmorphism Styles */
 .glass-panel {
   background: var(--bg-panel);
-  backdrop-filter: blur(24px) saturate(180%);
-  -webkit-backdrop-filter: blur(24px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 24px;
-  box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  border: 4px solid #000;
+  border-radius: 0;
+  box-shadow: 8px 8px 0px #000;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  transition: none;
 }
 
 /* Loading Portal */
@@ -237,8 +223,8 @@ body, html {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 24px;
-  border-radius: 100px;
+  padding: 15px 25px;
+  border-radius: 0;
 }
 
 .header-left {
@@ -392,51 +378,61 @@ body, html {
 /* Buttons */
 .btn {
   font-family: var(--font-hud);
-  font-weight: 500;
-  font-size: 0.85rem;
-  padding: 10px 20px;
-  border-radius: 30px;
+  font-weight: 700;
+  font-size: 1rem;
+  padding: 10px 15px;
+  border-radius: 0;
   cursor: pointer;
-  border: 1px solid transparent;
+  border: 3px solid #000;
+  box-shadow: 4px 4px 0px #000;
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  background: #fff;
+  color: #000;
+  text-transform: uppercase;
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+
+.btn:hover {
+  transform: translate(4px, 4px);
+  box-shadow: 0px 0px 0px #000;
 }
 
 .btn-primary {
-  background: rgba(255, 255, 255, 0.1);
+  background: #ff0000;
   color: #fff;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(10px);
+  border: 3px solid #000;
+  backdrop-filter: none;
 }
 
 .btn-primary:hover {
-  background: rgba(255, 255, 255, 0.2);
-  transform: translateY(-2px) scale(1.02);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  background: #000;
+  color: #fff;
+  transform: translate(4px, 4px);
+  box-shadow: 0 0 0 #000;
 }
 
 .btn-glow {
-  /* Removed heavy breathing glow for elegant look */
+  /* No glow */
 }
 
 @keyframes breathe {
-  0%, 100% { box-shadow: 0 0 10px rgba(255, 255, 255, 0.05); }
-  50% { box-shadow: 0 0 20px rgba(255, 255, 255, 0.1); }
+  0%, 100% { }
 }
 
 .btn-secondary {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: var(--text-secondary);
+  background: #ffff00;
+  border: 3px solid #000;
+  color: #000;
 }
 
 .btn-secondary:hover {
-  background: rgba(255, 255, 255, 0.15);
-  border-color: rgba(255, 255, 255, 0.3);
-  color: var(--text-primary);
-  transform: translateY(-1px);
+  background: #000;
+  border-color: #000;
+  color: #fff;
+  transform: translate(4px, 4px);
+  box-shadow: 0 0 0 #000;
 }
 
 /* Widgets */
@@ -768,46 +764,44 @@ select.glass-input option {
 /* 3D Task Card DOM Elements (Rendered via CSS3DRenderer) */
 .task-card {
   width: 290px;
-  padding: 18px;
-  border-radius: 20px;
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(24px) saturate(180%);
-  -webkit-backdrop-filter: blur(24px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  padding: 20px;
+  border-radius: 0;
+  background: #fff;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border: 4px solid #000;
+  box-shadow: 10px 10px 0px #000;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   transform-style: preserve-3d;
-  transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1), 
-              border-color 0.4s ease, 
-              box-shadow 0.4s ease;
+  transition: none;
   user-select: none;
 }
 
 /* Custom glow borders by priority */
 .task-card.priority-high {
-  border-left: 3px solid var(--neon-magenta);
+  border-left: 15px solid var(--neon-magenta);
 }
 .task-card.priority-high:hover {
-  border-color: var(--neon-magenta);
-  box-shadow: var(--glow-shadow-magenta), 0 10px 40px -10px rgba(0, 0, 0, 0.5);
+  border-color: #000;
+  box-shadow: 15px 15px 0px var(--neon-magenta);
 }
 
 .task-card.priority-medium {
-  border-left: 3px solid var(--neon-amber);
+  border-left: 15px solid var(--neon-amber);
 }
 .task-card.priority-medium:hover {
-  border-color: var(--neon-amber);
-  box-shadow: var(--glow-shadow-amber), 0 10px 40px -10px rgba(0, 0, 0, 0.5);
+  border-color: #000;
+  box-shadow: 15px 15px 0px var(--neon-amber);
 }
 
 .task-card.priority-low {
-  border-left: 3px solid var(--neon-cyan);
+  border-left: 15px solid var(--neon-cyan);
 }
 .task-card.priority-low:hover {
-  border-color: var(--neon-cyan);
-  box-shadow: var(--glow-shadow-cyan), 0 10px 40px -10px rgba(0, 0, 0, 0.5);
+  border-color: #000;
+  box-shadow: 15px 15px 0px var(--neon-cyan);
 }
 
 /* Card Content styling */
@@ -971,33 +965,32 @@ select.glass-input option {
   width: 300px;
   text-align: center;
   font-family: var(--font-tech);
-  letter-spacing: 2px;
+  letter-spacing: -1px;
+  font-size: 1.5rem;
   padding: 10px;
-  border-radius: 8px;
-  background: rgba(14, 11, 28, 0.4);
-  border: 1px solid rgba(255, 255, 255, 0.03);
-  color: var(--text-secondary);
-  font-weight: 700;
-  text-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
-  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  border-radius: 0;
+  background: #000;
+  border: 4px solid #fff;
+  color: #fff;
+  font-weight: 900;
+  text-shadow: none;
+  box-shadow: 8px 8px 0px var(--neon-cyan);
+  text-transform: uppercase;
 }
 
 .column-label-element.todo-header {
-  border-bottom: 2px solid var(--neon-magenta);
+  border-bottom: 8px solid var(--neon-magenta);
   color: var(--neon-magenta);
-  text-shadow: 0 0 10px rgba(255, 0, 127, 0.3);
 }
 
 .column-label-element.progress-header {
-  border-bottom: 2px solid var(--neon-amber);
+  border-bottom: 8px solid var(--neon-amber);
   color: var(--neon-amber);
-  text-shadow: 0 0 10px rgba(255, 170, 0, 0.3);
 }
 
 .column-label-element.done-header {
-  border-bottom: 2px solid var(--neon-cyan);
+  border-bottom: 8px solid var(--neon-cyan);
   color: var(--neon-cyan);
-  text-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
 }
 
 .card-filtered {
