@@ -6,8 +6,8 @@ import ToasterContext from "./components/ToasterContext";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Neumorphic Task Manager",
-  description: "A beautiful, client-side task manager using Next.js and Tailwind CSS.",
+  title: "Tasky",
+  description: "A beautiful, modern client-side task manager using Next.js and Tailwind CSS.",
 };
 
 export default function RootLayout({
