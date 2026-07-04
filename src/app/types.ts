@@ -12,5 +12,6 @@ export interface Task {
 }
 
 export type FilterStatus = 'All' | 'Active' | 'Completed';
+export type PriorityFilter = 'All' | Priority;
 
-export type SortOption = 'dueDateAsc' | 'dueDateDesc' | 'priorityAsc' | 'priorityDesc';
+export type SortOption = 'manual' | 'dueDateAsc' | 'dueDateDesc' | 'priorityAsc' | 'priorityDesc';

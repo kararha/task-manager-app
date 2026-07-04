@@ -7,7 +7,7 @@ import TaskCard from './components/TaskCard';
 import TaskForm from './components/TaskForm';
 import DashboardStats from './components/DashboardStats';
 import { Plus, Search, SlidersHorizontal, LayoutDashboard, Moon, Sun, Download, Upload } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, Reorder } from 'framer-motion';
 import { toast } from 'react-hot-toast';
 
 export default function TaskManager() {
@@ -27,7 +27,8 @@ export default function TaskManager() {
 
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<FilterStatus>('All');
-  const [sortOption, setSortOption] = useState<SortOption>('dueDateAsc');
+  const [priorityFilter, setPriorityFilter] = useState<'All' | 'High' | 'Medium' | 'Low'>('All');
+  const [sortOption, setSortOption] = useState<SortOption>('manual');
   const [categoryFilter, setCategoryFilter] = useState<string>('All');
 
   const safeTasks = Array.isArray(tasks) ? tasks : [];
@@ -59,32 +60,51 @@ export default function TaskManager() {
       result = result.filter(t => t?.completed);
     }
 
+    if (priorityFilter !== 'All') {
+      result = result.filter(t => t?.priority === priorityFilter);
+    }
+
     if (categoryFilter !== 'All') {
       result = result.filter(t => Array.isArray(t?.categories) && t.categories.includes(categoryFilter));
     }
 
-    result.sort((a, b) => {
-      const priorityWeights: Record<string, number> = { High: 3, Medium: 2, Low: 1 };
-      
-      const getPriority = (p: any) => priorityWeights[p] || 0;
-      const getTime = (d: any) => d ? new Date(d).getTime() : 0;
+    if (sortOption !== 'manual') {
+      result.sort((a, b) => {
+        const priorityWeights: Record<string, number> = { High: 3, Medium: 2, Low: 1 };
+        
+        const getPriority = (p: any) => priorityWeights[p] || 0;
+        const getTime = (d: any) => d ? new Date(d).getTime() : 0;
 
-      switch (sortOption) {
-        case 'dueDateAsc':
-          return getTime(a.dueDate) - getTime(b.dueDate);
-        case 'dueDateDesc':
-          return getTime(b.dueDate) - getTime(a.dueDate);
-        case 'priorityDesc':
-          return getPriority(b.priority) - getPriority(a.priority);
-        case 'priorityAsc':
-          return getPriority(a.priority) - getPriority(b.priority);
-        default:
-          return 0;
-      }
-    });
+        switch (sortOption) {
+          case 'dueDateAsc':
+            return getTime(a.dueDate) - getTime(b.dueDate);
+          case 'dueDateDesc':
+            return getTime(b.dueDate) - getTime(a.dueDate);
+          case 'priorityDesc':
+            return getPriority(b.priority) - getPriority(a.priority);
+          case 'priorityAsc':
+            return getPriority(a.priority) - getPriority(b.priority);
+          default:
+            return 0;
+        }
+      });
+    }
 
     return result;
-  }, [safeTasks, searchQuery, statusFilter, categoryFilter, sortOption]);
+  }, [safeTasks, searchQuery, statusFilter, priorityFilter, categoryFilter, sortOption]);
+
+  const handleReorder = (newOrder: Task[]) => {
+    // If not in manual sort, prevent dragging logic or force switch to manual
+    if (sortOption !== 'manual') {
+      setSortOption('manual');
+      toast('Switched to manual sort mode', { icon: '🖐️' });
+    }
+    
+    // Create a new tasks array preserving the elements that are hidden by filters
+    const visibleIds = new Set(newOrder.map(t => t.id));
+    const hiddenTasks = safeTasks.filter(t => !visibleIds.has(t.id));
+    setTasks([...newOrder, ...hiddenTasks]);
+  };
 
   const handleSaveTask = (taskData: Omit<Task, 'id' | 'createdAt'>) => {
     if (editingTask) {
@@ -223,21 +243,39 @@ export default function TaskManager() {
           </div>
 
           {/* Filters */}
-          <div className="flex flex-col sm:flex-row lg:flex-nowrap items-center gap-4 sm:gap-6 w-full lg:w-auto justify-end">
-            <div className="flex flex-wrap justify-center items-center gap-3 sm:gap-4 w-full sm:w-auto">
-              {(['All', 'Active', 'Completed'] as FilterStatus[]).map(status => (
-                <button
-                  key={status}
-                  onClick={() => setStatusFilter(status)}
-                  className={`px-5 py-3 sm:px-8 sm:py-4 rounded-2xl sm:rounded-3xl font-extrabold uppercase tracking-wider text-xs sm:text-sm transition-all duration-200 flex-1 sm:flex-none ${
-                    statusFilter === status 
-                      ? 'bg-neu-base shadow-neu-pressed text-neu-accent' 
-                      : 'bg-neu-base shadow-neu-flat hover:shadow-neu-sm active:shadow-neu-pressed text-gray-500 hover:text-gray-700'
-                  }`}
-                >
-                  {status}
-                </button>
-              ))}
+          <div className="flex flex-col xl:flex-row lg:flex-nowrap items-center gap-4 sm:gap-6 w-full xl:w-auto justify-end">
+            <div className="flex flex-col sm:flex-row gap-4">
+              <div className="flex flex-wrap justify-center items-center gap-3 sm:gap-4 w-full sm:w-auto">
+                {(['All', 'Active', 'Completed'] as FilterStatus[]).map(status => (
+                  <button
+                    key={status}
+                    onClick={() => setStatusFilter(status)}
+                    className={`px-4 py-2 sm:px-6 sm:py-3 rounded-xl sm:rounded-2xl font-extrabold uppercase tracking-wider text-[10px] sm:text-xs transition-all duration-200 flex-1 sm:flex-none ${
+                      statusFilter === status 
+                        ? 'bg-neu-base shadow-neu-pressed text-neu-accent' 
+                        : 'bg-neu-base shadow-neu-flat hover:shadow-neu-sm active:shadow-neu-pressed text-gray-500 hover:text-gray-700'
+                    }`}
+                  >
+                    {status}
+                  </button>
+                ))}
+              </div>
+
+              <div className="flex flex-wrap justify-center items-center gap-3 sm:gap-4 w-full sm:w-auto">
+                {(['All', 'High', 'Medium', 'Low'] as const).map(prio => (
+                  <button
+                    key={prio}
+                    onClick={() => setPriorityFilter(prio)}
+                    className={`px-4 py-2 sm:px-6 sm:py-3 rounded-xl sm:rounded-2xl font-extrabold uppercase tracking-wider text-[10px] sm:text-xs transition-all duration-200 flex-1 sm:flex-none ${
+                      priorityFilter === prio 
+                        ? 'bg-neu-base shadow-neu-pressed text-neu-accent' 
+                        : 'bg-neu-base shadow-neu-flat hover:shadow-neu-sm active:shadow-neu-pressed text-gray-500 hover:text-gray-700'
+                    }`}
+                  >
+                    {prio === 'All' ? 'All Priority' : prio}
+                  </button>
+                ))}
+              </div>
             </div>
 
             <div className="h-px w-full sm:h-12 sm:w-px bg-white/40 shadow-sm block sm:hidden lg:block sm:mx-2 my-2 sm:my-0"></div>
@@ -250,6 +288,7 @@ export default function TaskManager() {
                   onChange={(e) => setSortOption(e.target.value as SortOption)}
                   className="w-full bg-neu-base shadow-neu-flat hover:shadow-neu-sm active:shadow-neu-pressed rounded-2xl sm:rounded-3xl pl-12 sm:pl-14 pr-6 sm:pr-8 py-3 sm:py-4 outline-none cursor-pointer font-bold text-gray-600 appearance-none transition-all uppercase tracking-wide text-xs"
                 >
+                  <option value="manual">Manual Order (Drag)</option>
                   <option value="dueDateAsc">Date (Earliest)</option>
                   <option value="dueDateDesc">Date (Latest)</option>
                   <option value="priorityDesc">Priority (High-Low)</option>
@@ -276,16 +315,22 @@ export default function TaskManager() {
         {/* Task List */}
         <section>
           {filteredAndSortedTasks.length > 0 ? (
-            <motion.div layout className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-10">
+            <Reorder.Group 
+              axis="y" 
+              values={filteredAndSortedTasks} 
+              onReorder={handleReorder}
+              className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-10"
+            >
               <AnimatePresence mode="popLayout">
                 {filteredAndSortedTasks.map(task => (
-                  <motion.div
+                  <Reorder.Item
                     key={task.id}
-                    layout
+                    value={task}
                     initial={{ opacity: 0, scale: 0.9, y: 20 }}
                     animate={{ opacity: 1, scale: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.9, y: -20 }}
                     transition={{ duration: 0.3 }}
+                    className="cursor-grab active:cursor-grabbing"
                   >
                     <TaskCard 
                       task={task} 
@@ -296,10 +341,10 @@ export default function TaskManager() {
                         setIsFormOpen(true);
                       }}
                     />
-                  </motion.div>
+                  </Reorder.Item>
                 ))}
               </AnimatePresence>
-            </motion.div>
+            </Reorder.Group>
           ) : (
             <div className="text-center py-16 sm:py-24 px-4 sm:px-6 bg-neu-base shadow-neu-pressed rounded-3xl sm:rounded-[48px] max-w-2xl mx-auto mt-8 sm:mt-16 border-2 border-white/20">
               <div className="w-20 h-20 sm:w-24 sm:h-24 bg-neu-base shadow-neu-flat rounded-full flex items-center justify-center mx-auto mb-6 sm:mb-8">
