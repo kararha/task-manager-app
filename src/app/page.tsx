@@ -1,0 +1,219 @@
+"use client";
+
+import React, { useState, useMemo } from 'react';
+import { Task, FilterStatus, SortOption } from './types';
+import { useLocalStorage } from './hooks/useLocalStorage';
+import TaskCard from './components/TaskCard';
+import TaskForm from './components/TaskForm';
+import DashboardStats from './components/DashboardStats';
+import { Plus, Search, SlidersHorizontal, LayoutDashboard } from 'lucide-react';
+
+export default function TaskManager() {
+  const [tasks, setTasks, isHydrated] = useLocalStorage<Task[]>('tasks', []);
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [editingTask, setEditingTask] = useState<Task | null>(null);
+
+  const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState<FilterStatus>('All');
+  const [sortOption, setSortOption] = useState<SortOption>('dueDateAsc');
+  const [categoryFilter, setCategoryFilter] = useState<string>('All');
+
+  const allCategories = useMemo(() => {
+    const cats = new Set<string>();
+    tasks.forEach(t => t.categories.forEach(c => cats.add(c)));
+    return Array.from(cats).sort();
+  }, [tasks]);
+
+  const filteredAndSortedTasks = useMemo(() => {
+    let result = [...tasks];
+
+    if (searchQuery) {
+      const lowerQuery = searchQuery.toLowerCase();
+      result = result.filter(t => 
+        t.title.toLowerCase().includes(lowerQuery) || 
+        t.description.toLowerCase().includes(lowerQuery)
+      );
+    }
+
+    if (statusFilter === 'Active') {
+      result = result.filter(t => !t.completed);
+    } else if (statusFilter === 'Completed') {
+      result = result.filter(t => t.completed);
+    }
+
+    if (categoryFilter !== 'All') {
+      result = result.filter(t => t.categories.includes(categoryFilter));
+    }
+
+    result.sort((a, b) => {
+      const priorityWeights = { High: 3, Medium: 2, Low: 1 };
+      switch (sortOption) {
+        case 'dueDateAsc':
+          return new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime();
+        case 'dueDateDesc':
+          return new Date(b.dueDate).getTime() - new Date(a.dueDate).getTime();
+        case 'priorityDesc':
+          return priorityWeights[b.priority] - priorityWeights[a.priority];
+        case 'priorityAsc':
+          return priorityWeights[a.priority] - priorityWeights[b.priority];
+        default:
+          return 0;
+      }
+    });
+
+    return result;
+  }, [tasks, searchQuery, statusFilter, categoryFilter, sortOption]);
+
+  const handleSaveTask = (taskData: Omit<Task, 'id' | 'createdAt'>) => {
+    if (editingTask) {
+      setTasks(tasks.map(t => t.id === editingTask.id ? { ...taskData, id: t.id, createdAt: t.createdAt } : t));
+    } else {
+      const newTask: Task = {
+        ...taskData,
+        id: crypto.randomUUID(),
+        createdAt: new Date().toISOString(),
+      };
+      setTasks([...tasks, newTask]);
+    }
+    setIsFormOpen(false);
+    setEditingTask(null);
+  };
+
+  const handleUpdateTask = (updatedTask: Task) => {
+    setTasks(tasks.map(t => t.id === updatedTask.id ? updatedTask : t));
+  };
+
+  const handleDeleteTask = (id: string) => {
+    setTasks(tasks.filter(t => t.id !== id));
+  };
+
+  if (!isHydrated) {
+    return (
+      <div className="min-h-screen bg-[#E0E5EC] flex items-center justify-center">
+        <div className="w-16 h-16 rounded-full bg-[#E0E5EC] shadow-[9px_9px_16px_rgba(163,177,198,0.6),-9px_-9px_16px_rgba(255,255,255,0.5)] flex items-center justify-center">
+          <div className="w-8 h-8 border-4 border-[#4299E1] border-t-transparent rounded-full animate-spin"></div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <main className="min-h-screen bg-neu-base text-neu-text font-sans pb-12 pt-6 sm:pb-16 sm:pt-10 selection:bg-neu-accent selection:text-white">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6">
+        
+        {/* Header */}
+        <header className="flex flex-col sm:flex-row items-center justify-between mb-8 sm:mb-16 gap-6 sm:gap-8">
+          <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-neu-base shadow-neu-flat flex items-center justify-center text-neu-accent">
+            <LayoutDashboard className="w-8 h-8 sm:w-10 sm:h-10" />
+          </div>
+          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-widest uppercase text-transparent bg-clip-text bg-gradient-to-br from-gray-600 to-gray-800 flex-1 text-center sm:text-left drop-shadow-sm">
+            TaskMaster
+          </h1>
+          <button 
+            onClick={() => { setEditingTask(null); setIsFormOpen(true); }}
+            className="flex items-center gap-2 sm:gap-3 bg-neu-base shadow-neu-flat hover:shadow-neu-sm active:shadow-neu-pressed text-neu-accent px-6 py-4 sm:px-8 sm:py-5 rounded-2xl font-extrabold transition-all duration-200"
+          >
+            <Plus className="w-5 h-5 sm:w-6 sm:h-6" />
+            <span className="uppercase tracking-widest text-xs sm:text-sm">New Task</span>
+          </button>
+        </header>
+
+        <DashboardStats tasks={tasks} />
+
+        {/* Toolbar */}
+        <section className="bg-neu-base shadow-neu-flat p-5 sm:p-8 rounded-3xl sm:rounded-[40px] mb-8 sm:mb-12 flex flex-col lg:flex-row gap-6 sm:gap-8 justify-between items-center z-20 relative">
+          
+          {/* Search */}
+          <div className="relative w-full lg:w-[400px]">
+            <Search className="w-5 h-5 sm:w-6 sm:h-6 absolute left-5 sm:left-6 top-1/2 -translate-y-1/2 text-gray-400" />
+            <input 
+              type="text" 
+              placeholder="Search tasks..." 
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-12 sm:pl-16 pr-5 sm:pr-6 py-4 sm:py-5 bg-neu-base shadow-neu-pressed rounded-2xl sm:rounded-3xl outline-none focus:text-neu-accent transition-all font-bold placeholder:text-gray-400 placeholder:font-normal text-neu-text text-base sm:text-lg"
+            />
+          </div>
+
+          {/* Filters */}
+          <div className="flex flex-col sm:flex-row lg:flex-nowrap items-center gap-4 sm:gap-6 w-full lg:w-auto justify-end">
+            <div className="flex flex-wrap justify-center items-center gap-3 sm:gap-4 w-full sm:w-auto">
+              {(['All', 'Active', 'Completed'] as FilterStatus[]).map(status => (
+                <button
+                  key={status}
+                  onClick={() => setStatusFilter(status)}
+                  className={`px-5 py-3 sm:px-8 sm:py-4 rounded-2xl sm:rounded-3xl font-extrabold uppercase tracking-wider text-xs sm:text-sm transition-all duration-200 flex-1 sm:flex-none ${
+                    statusFilter === status 
+                      ? 'bg-neu-base shadow-neu-pressed text-neu-accent' 
+                      : 'bg-neu-base shadow-neu-flat hover:shadow-neu-sm active:shadow-neu-pressed text-gray-500 hover:text-gray-700'
+                  }`}
+                >
+                  {status}
+                </button>
+              ))}
+            </div>
+
+            <div className="h-px w-full sm:h-12 sm:w-px bg-white/40 shadow-sm block sm:hidden lg:block sm:mx-2 my-2 sm:my-0"></div>
+
+            <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-5 w-full sm:w-auto">
+              <div className="relative w-full sm:flex-1 md:flex-none">
+                <SlidersHorizontal className="w-4 h-4 sm:w-5 sm:h-5 absolute left-5 sm:left-6 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                <select 
+                  value={sortOption}
+                  onChange={(e) => setSortOption(e.target.value as SortOption)}
+                  className="w-full bg-neu-base shadow-neu-flat hover:shadow-neu-sm active:shadow-neu-pressed rounded-2xl sm:rounded-3xl pl-12 sm:pl-14 pr-6 sm:pr-8 py-3 sm:py-4 outline-none cursor-pointer font-bold text-gray-600 appearance-none transition-all uppercase tracking-wide text-xs"
+                >
+                  <option value="dueDateAsc">Date (Earliest)</option>
+                  <option value="dueDateDesc">Date (Latest)</option>
+                  <option value="priorityDesc">Priority (High-Low)</option>
+                  <option value="priorityAsc">Priority (Low-High)</option>
+                </select>
+              </div>
+
+              {allCategories.length > 0 && (
+                <select 
+                  value={categoryFilter}
+                  onChange={(e) => setCategoryFilter(e.target.value)}
+                  className="w-full sm:flex-1 md:flex-none bg-neu-base shadow-neu-flat hover:shadow-neu-sm active:shadow-neu-pressed rounded-2xl sm:rounded-3xl px-6 sm:px-8 py-3 sm:py-4 outline-none cursor-pointer font-bold text-gray-600 appearance-none transition-all text-center uppercase tracking-wide text-xs"
+                >
+                  <option value="All">All Tags</option>
+                  {allCategories.map(cat => (
+                    <option key={cat} value={cat}>{cat}</option>
+                  ))}
+                </select>
+              )}
+            </div>
+          </div>
+        </section>
+
+        {/* Task List */}
+        <section>
+          {filteredAndSortedTasks.length > 0 ? (
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-10">
+              {filteredAndSortedTasks.map(task => (
+                <TaskCard 
+                  key={task.id} 
+                  task={task} 
+                  onUpdate={handleUpdateTask} 
+                  onDelete={handleDeleteTask} 
+                  onEdit={(t) => {
+                    setEditingTask(t);
+                    setIsFormOpen(true);
+                  }}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-16 sm:py-24 px-4 sm:px-6 bg-neu-base shadow-neu-pressed rounded-3xl sm:rounded-[48px] max-w-2xl mx-auto mt-8 sm:mt-16 border-2 border-white/20">
+              <div className="w-20 h-20 sm:w-24 sm:h-24 bg-neu-base shadow-neu-flat rounded-full flex items-center justify-center mx-auto mb-6 sm:mb-8">
+                <Search className="w-8 h-8 sm:w-10 sm:h-10 text-gray-400" />
+              </div>
+              <h3 className="text-xl sm:text-2xl font-bold text-neu-text mb-3 sm:mb-4">No tasks found</h3>
+              <p className="text-sm sm:text-lg text-gray-500 max-w-md mx-auto mb-8 sm:mb-10 leading-relaxed font-medium">
+                {tasks.length === 0 
+                  ? "You haven't created any tasks yet. Get started by creating your first task!"
+                  : "We couldn't find any tasks matching your current filters."}
+              </p>
+              {tasks.length === 0 && (
+                <button 
+                 

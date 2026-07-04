@@ -1,0 +1,9 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Neumorphism requires exact matching background */
+body {
+  background-color: #E0E5EC;
+  color: #2D3748;
+}
