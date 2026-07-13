@@ -2,8 +2,61 @@
 
 import React from 'react';
 import { Task } from '../types';
-import { Calendar, Tag, AlertCircle, CheckCircle2, Circle, Edit2, Trash2 } from 'lucide-react';
-import { toast } from 'react-hot-toast';
+import { CheckCircle2, Circle, Edit2, Trash2, Calendar, AlertCircle, Tag } from 'lucide-react';
+import { TiltCard } from './SpecialEffects';
+import { BentoCard } from './BentoGrid';
+import { cn } from '../utils';
+import toast from 'react-hot-toast';
+
+const getCategoryTone = (category: string): "success" | "warning" | "info" | "danger" | "neutral" => {
+  const normalized = category.toLowerCase().trim();
+  if (['work', 'job', 'office', 'dev', 'coding', 'project'].some(k => normalized.includes(k))) {
+    return 'info';
+  }
+  if (['personal', 'life', 'health', 'fitness', 'home'].some(k => normalized.includes(k))) {
+    return 'success';
+  }
+  if (['urgent', 'priority', 'high', 'asap', 'alert', 'critical', 'due'].some(k => normalized.includes(k))) {
+    return 'danger';
+  }
+  if (['idea', 'creative', 'design', 'learn', 'study', 'read'].some(k => normalized.includes(k))) {
+    return 'warning';
+  }
+  return 'neutral';
+};
+
+const getCardAccent = (priority: string, completed: boolean): string => {
+  if (completed) return 'neutral';
+  if (priority === 'High') return 'danger';
+  if (priority === 'Medium') return 'warning';
+  return 'info';
+};
+
+const BackgroundGlow = ({ priority, completed }: { priority: string; completed: boolean }) => {
+  if (completed) {
+    return (
+      <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-20">
+        <div className="absolute -top-20 -left-20 w-48 h-48 rounded-full blur-3xl bg-emerald-500/10" />
+        <div className="absolute -bottom-20 -right-20 w-48 h-48 rounded-full blur-3xl bg-slate-500/10" />
+      </div>
+    );
+  }
+  
+  const glowColors: Record<string, string> = {
+    High: "from-rose-500/10 to-pink-500/5",
+    Medium: "from-amber-500/10 to-yellow-500/5",
+    Low: "from-blue-500/10 to-indigo-500/5",
+  };
+
+  const glowClass = glowColors[priority] || "from-blue-500/10 to-indigo-500/5";
+
+  return (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-40 group-hover:opacity-60 transition-opacity duration-500">
+      <div className={`absolute -top-20 -left-20 w-48 h-48 rounded-full blur-3xl bg-gradient-to-br ${glowClass}`} />
+      <div className="absolute -bottom-20 -right-20 w-48 h-48 rounded-full blur-3xl bg-purple-500/5" />
+    </div>
+  );
+};
 
 interface TaskCardProps {
   task: Task;
@@ -20,106 +73,106 @@ export default function TaskCard({ task, onUpdate, onDelete, onEdit }: TaskCardP
   };
 
   return (
-    <div className={`group relative p-6 rounded-[32px] bg-neu-base transition-all duration-300 ${
-      task.completed ? 'shadow-neu-pressed opacity-70' : 'shadow-neu-flat'
-    }`}>
-      
-      <div className="flex items-start gap-5">
-        <button 
-          onClick={handleToggle}
-          className={`mt-1 flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 ${
-            task.completed 
-              ? 'shadow-neu-pressed text-neu-accent' 
-              : 'shadow-neu-flat hover:shadow-neu-sm text-gray-400 hover:text-neu-accent active:shadow-neu-pressed'
-          }`}
-          aria-label={task.completed ? "Mark as incomplete" : "Mark as complete"}
-        >
-          {task.completed ? <CheckCircle2 className="w-6 h-6" /> : <Circle className="w-6 h-6" />}
-        </button>
+    <TiltCard className="h-full">
+      <BentoCard
+        className={cn(
+          "card card-accent h-full p-0 flex flex-col justify-between select-none cursor-grab active:cursor-grabbing",
+          task.completed ? "opacity-70" : ""
+        )}
+        data-accent={getCardAccent(task.priority, task.completed)}
+        background={<BackgroundGlow priority={task.priority} completed={task.completed} />}
+      >
+        <div className="p-6 flex flex-col justify-between h-full relative z-10">
+          <div className="flex items-start gap-4">
+            <label className="check mt-1 flex-shrink-0">
+              <input 
+                type="checkbox"
+                checked={task.completed}
+                onChange={handleToggle}
+                aria-label={task.completed ? "Mark as incomplete" : "Mark as complete"}
+              />
+            </label>
 
-        <div className="flex-1 min-w-0">
-          <div className="flex justify-between items-start mb-3">
-            <h3 className={`text-xl font-bold truncate pr-4 mt-2 ${task.completed ? 'line-through text-gray-400' : 'text-neu-text'}`}>
-              {task.title}
-            </h3>
-            
-            <div className="flex flex-col gap-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity ml-2">
-              <button 
-                onClick={() => onEdit(task)}
-                className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-neu-base shadow-neu-flat hover:shadow-neu-sm active:shadow-neu-pressed flex items-center justify-center text-gray-500 hover:text-neu-accent transition-all"
-                aria-label="Edit task"
-              >
-                <Edit2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-              </button>
-              <button 
-                onClick={() => {
-                  toast((t) => (
-                    <div className="flex flex-col gap-3">
-                      <span className="font-bold text-neu-text text-sm">Delete this task?</span>
-                      <div className="flex gap-3">
-                        <button 
-                          onClick={() => { 
-                            toast.dismiss(t.id); 
-                            onDelete(task.id); 
-                            toast.success('Task deleted', { 
-                              iconTheme: { primary: '#ef4444', secondary: '#E0E5EC' },
-                            }); 
-                          }}
-                          className="px-4 py-2 bg-neu-base shadow-neu-flat hover:shadow-neu-sm active:shadow-neu-pressed rounded-xl text-red-500 text-xs font-bold transition-all"
-                        >
-                          Yes, delete
-                        </button>
-                        <button 
-                          onClick={() => toast.dismiss(t.id)}
-                          className="px-4 py-2 bg-neu-base shadow-neu-flat hover:shadow-neu-sm active:shadow-neu-pressed rounded-xl text-gray-500 text-xs font-bold transition-all"
-                        >
-                          Cancel
-                        </button>
-                      </div>
-                    </div>
-                  ), { duration: 5000 });
-                }}
-                className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-neu-base shadow-neu-flat hover:shadow-neu-sm active:shadow-neu-pressed flex items-center justify-center text-gray-500 hover:text-red-500 transition-all"
-                aria-label="Delete task"
-              >
-                <Trash2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-              </button>
-            </div>
-          </div>
-
-          <p className="text-gray-500 text-sm mb-6 line-clamp-2 leading-relaxed font-medium">
-            {task.description}
-          </p>
-
-          <div className="flex flex-wrap items-center gap-4 text-xs font-bold text-gray-500">
-            <div className={`flex items-center gap-1.5 ${
-              task.priority === 'High' ? 'text-red-500' : 
-              task.priority === 'Medium' ? 'text-orange-500' : 'text-neu-accent'
-            }`}>
-              <AlertCircle className="w-4 h-4" />
-              {task.priority}
-            </div>
-
-            <div className={`flex items-center gap-1.5 ${isOverdue ? 'text-red-500' : ''}`}>
-              <Calendar className="w-4 h-4" />
-              <span>{new Date(task.dueDate).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}</span>
-            </div>
-
-            {task.categories.length > 0 && (
-              <div className="flex items-center gap-1.5">
-                <Tag className="w-4 h-4" />
-                <div className="flex gap-2">
-                  {task.categories.map(cat => (
-                    <span key={cat} className="px-3 py-1.5 bg-neu-base shadow-neu-pressed rounded-full text-neu-accent">
-                      {cat}
-                    </span>
-                  ))}
+            <div className="flex-1 min-w-0">
+              <div className="flex justify-between items-start mb-2">
+                <h3 className={cn(
+                  "t-title-md truncate pr-4 leading-snug",
+                  task.completed ? 'line-through t-muted' : 't-primary'
+                )}>
+                  {task.title}
+                </h3>
+                
+                <div className="flex gap-1.5 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-all duration-300 transform sm:translate-y-2 sm:group-hover:translate-y-0">
+                  <button 
+                    onClick={(e) => { e.stopPropagation(); onEdit(task); }}
+                    className="btn btn-secondary btn-icon btn-sm"
+                    aria-label="Edit task"
+                  >
+                    <Edit2 className="w-3.5 h-3.5" />
+                  </button>
+                  <button 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toast((t) => (
+                        <div className="flex flex-col gap-3">
+                          <span className="font-bold text-[var(--color-text-primary)] text-sm">Delete this task?</span>
+                          <div className="flex gap-3">
+                            <button 
+                              onClick={() => { 
+                                toast.dismiss(t.id); 
+                                onDelete(task.id); 
+                                toast.success('Task deleted', { 
+                                  iconTheme: { primary: '#FF3A5C', secondary: '#0A0B0F' },
+                                }); 
+                              }}
+                              className="btn btn-danger btn-sm"
+                            >
+                              Yes, delete
+                            </button>
+                            <button 
+                              onClick={() => toast.dismiss(t.id)}
+                              className="btn btn-secondary btn-sm"
+                            >
+                              Cancel
+                            </button>
+                          </div>
+                        </div>
+                      ), { duration: 5000 });
+                    }}
+                    className="btn btn-danger btn-icon btn-sm"
+                    aria-label="Delete task"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
                 </div>
               </div>
-            )}
+
+              <p className="t-body-sm line-clamp-2 leading-relaxed mb-4">
+                {task.description}
+              </p>
+
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="chip" data-tone={task.priority === 'High' ? 'danger' : task.priority === 'Medium' ? 'warning' : 'info'}>
+                  <AlertCircle className="w-3 h-3" />
+                  {task.priority}
+                </span>
+
+                <span className={cn("chip", isOverdue ? "border-[var(--color-danger)] text-[var(--color-danger)] bg-[var(--color-danger-soft)]" : "")} data-tone="neutral">
+                  <Calendar className="w-3 h-3" />
+                  <span>{new Date(task.dueDate).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                </span>
+
+                {task.categories.map(cat => (
+                  <span key={cat} className="chip" data-tone={getCategoryTone(cat)}>
+                    <Tag className="w-3 h-3" />
+                    {cat}
+                  </span>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-    </div>
+      </BentoCard>
+    </TiltCard>
   );
 }

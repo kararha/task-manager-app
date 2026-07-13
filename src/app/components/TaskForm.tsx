@@ -59,78 +59,84 @@ export default function TaskForm({ initialTask, onSave, onCancel }: TaskFormProp
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-neu-base/80 backdrop-blur-md overflow-y-auto">
-      <div className="bg-neu-base rounded-3xl shadow-neu-flat w-full max-w-md m-auto border border-white/40">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-[var(--color-overlay)] backdrop-blur-md overflow-y-auto">
+      <div className="surface-elevated w-full max-w-md m-auto">
         <div className="flex justify-between items-center p-6 pb-2">
-          <h2 className="text-xl font-bold text-neu-text tracking-wide">
+          <h2 className="t-title-md">
             {initialTask ? 'Edit Task' : 'New Task'}
           </h2>
           <button 
             type="button"
             onClick={onCancel}
-            className="w-10 h-10 rounded-full bg-neu-base shadow-neu-flat hover:shadow-neu-sm active:shadow-neu-pressed flex items-center justify-center text-gray-500 hover:text-neu-accent transition-all"
+            className="btn btn-secondary btn-icon btn-sm"
+            aria-label="Close modal"
           >
-            <X className="w-5 h-5" />
+            <X className="w-4 h-4" />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6 pt-3 space-y-4">
-          <div>
-            <label className="block text-xs font-bold text-neu-text/70 mb-2 ml-1 uppercase tracking-wider">Title <span className="text-red-400">*</span></label>
+        <form onSubmit={handleSubmit} className="p-6 pt-3 stack-md">
+          <div className="field">
+            <label className="field-label">Title <span className="text-red-500">*</span></label>
             <input 
               type="text" 
               required
               value={title}
               onChange={e => setTitle(e.target.value)}
-              className="w-full px-4 py-3 rounded-2xl bg-neu-base shadow-neu-pressed text-neu-text focus:text-neu-accent outline-none transition-all placeholder:text-gray-400 font-medium text-sm"
+              className="input"
               placeholder="E.g., Complete project proposal"
             />
           </div>
 
-          <div>
-            <label className="block text-xs font-bold text-neu-text/70 mb-2 ml-1 uppercase tracking-wider">Description</label>
+          <div className="field">
+            <label className="field-label">Description</label>
             <textarea 
               value={description}
               onChange={e => setDescription(e.target.value)}
-              rows={2}
-              className="w-full px-4 py-3 rounded-2xl bg-neu-base shadow-neu-pressed text-neu-text focus:text-neu-accent outline-none transition-all placeholder:text-gray-400 resize-none font-medium text-sm"
+              className="textarea"
               placeholder="Add details about this task..."
             />
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-xs font-bold text-neu-text/70 mb-2 ml-1 uppercase tracking-wider">Due Date <span className="text-red-400">*</span></label>
+            <div className="field">
+              <label className="field-label">Due Date <span className="text-red-400">*</span></label>
               <input 
                 type="date" 
                 required
                 value={dueDate}
                 onChange={e => setDueDate(e.target.value)}
-                className="w-full px-4 py-3 rounded-2xl bg-neu-base shadow-neu-pressed text-neu-text focus:text-neu-accent outline-none transition-all font-medium text-sm"
+                className="input"
               />
             </div>
-            <div>
-              <label className="block text-xs font-bold text-neu-text/70 mb-2 ml-1 uppercase tracking-wider">Priority</label>
-              <select 
-                value={priority}
-                onChange={e => setPriority(e.target.value as Priority)}
-                className="w-full px-4 py-3 rounded-2xl bg-neu-base shadow-neu-pressed text-neu-text focus:text-neu-accent outline-none transition-all appearance-none cursor-pointer font-medium text-sm"
-              >
-                <option value="Low">Low</option>
-                <option value="Medium">Medium</option>
-                <option value="High">High</option>
-              </select>
+            <div className="field">
+              <label className="field-label">Priority</label>
+              <div className="tabs w-full">
+                {(['Low', 'Medium', 'High'] as Priority[]).map((p) => {
+                  const isActive = priority === p;
+                  return (
+                    <button
+                      key={p}
+                      type="button"
+                      onClick={() => setPriority(p)}
+                      className={`tab flex-1 ${isActive ? 'is-active' : ''}`}
+                    >
+                      {p}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           </div>
 
-          <div>
-            <label className="block text-xs font-bold text-neu-text/70 mb-2 ml-1 uppercase tracking-wider">Categories (Press Enter)</label>
+          <div className="field">
+            <label className="field-label">Categories</label>
             <div className="flex flex-wrap gap-2 mb-2">
               {categories.map(cat => (
-                <span key={cat} className="px-3 py-1.5 bg-neu-base shadow-neu-flat text-neu-accent rounded-full text-xs font-bold flex items-center gap-2">
+                <span key={cat} className="chip animate-fade-in" data-tone="info">
                   {cat}
-                  <button type="button" onClick={() => removeCategory(cat)} className="hover:text-red-500 transition-colors">
-                    <X className="w-3.5 h-3.5" />
+                  <button type="button" onClick={() => removeCategory(cat)} className="hover:text-red-500 transition-colors ml-1">
+                    <X className="w-3 h-3" />
                   </button>
                 </span>
               ))}
@@ -140,22 +146,22 @@ export default function TaskForm({ initialTask, onSave, onCancel }: TaskFormProp
               value={categoryInput}
               onChange={e => setCategoryInput(e.target.value)}
               onKeyDown={handleAddCategory}
-              className="w-full px-4 py-3 rounded-2xl bg-neu-base shadow-neu-pressed text-neu-text focus:text-neu-accent outline-none transition-all placeholder:text-gray-400 font-medium text-sm"
-              placeholder="E.g., Work, Personal"
+              className="input"
+              placeholder="Press Enter to add tags"
             />
           </div>
 
-          <div className="pt-6 flex gap-4 justify-end">
+          <div className="pt-6 flex gap-3 justify-end">
             <button 
               type="button" 
               onClick={onCancel}
-              className="px-6 py-3 font-bold text-sm text-gray-500 rounded-2xl bg-neu-base shadow-neu-flat hover:shadow-neu-sm active:shadow-neu-pressed transition-all duration-200"
+              className="btn btn-secondary"
             >
               Cancel
             </button>
             <button 
               type="submit" 
-              className="px-6 py-3 font-bold text-sm text-neu-accent rounded-2xl bg-neu-base shadow-neu-flat hover:shadow-neu-sm active:shadow-neu-pressed transition-all duration-200"
+              className="btn btn-primary"
             >
               {initialTask ? 'Save Changes' : 'Create Task'}
             </button>

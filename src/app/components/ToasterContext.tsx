@@ -6,14 +6,12 @@ export default function ToasterContext() {
     <Toaster 
       position="bottom-center"
       toastOptions={{
+        className: 'bg-white/80 dark:bg-slate-900/80 backdrop-blur-md text-slate-900 dark:text-slate-100 font-semibold border border-slate-200/50 dark:border-slate-800/30 rounded-2xl shadow-lg px-6 py-4',
         style: {
-          background: '#E0E5EC',
-          color: '#2D3748',
-          boxShadow: '9px 9px 16px rgba(163,177,198,0.6), -9px -9px 16px rgba(255,255,255,0.5)',
-          borderRadius: '24px',
-          padding: '16px 24px',
-          fontWeight: 'bold',
-          border: '1px solid rgba(255,255,255,0.4)',
+          background: 'none',
+          boxShadow: 'none',
+          border: 'none',
+          padding: 0,
         }
       }}
     />
